@@ -2,6 +2,9 @@ package com.test.stock.demo.module;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 /**
  * @author cuibaoqiang
  * @date 2021-01-05 15:59:41
@@ -9,13 +12,9 @@ import lombok.Data;
  */
 @Data
 public class KLineInfo {
-    /**
-     * 代码
-     */
-    String code;
 
-    /**
-     * 名称
-     */
-    String name;
+    private Date day;
+
+    private BigDecimal close;
+
 }

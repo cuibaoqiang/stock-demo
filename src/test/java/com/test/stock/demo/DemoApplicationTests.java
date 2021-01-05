@@ -1,5 +1,6 @@
 package com.test.stock.demo;
 
+import com.test.stock.demo.request.SinaKLineRequest;
 import com.test.stock.demo.service.StockService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
@@ -14,8 +15,18 @@ class DemoApplicationTests {
     private StockService stockService;
 
     @Test
-    void contextLoads() {
-        log.info("" + stockService.queryAllStockList());
+    void queryAllStockList() {
+        log.info("" + stockService.queryAllStockList().size());
+    }
+
+    @Test
+    void getKLineData() {
+        log.info("" + stockService.getKLineData(SinaKLineRequest.builder()
+                .code("sh600519")
+                .scale(60)
+                .ma("no")
+                .dataLen(100)
+                .build()));
     }
 
 }
