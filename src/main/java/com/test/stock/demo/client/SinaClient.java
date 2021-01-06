@@ -16,6 +16,6 @@ import java.util.List;
 public interface SinaClient {
 
     @GetMapping(path = "CN_MarketData.getKLineData")
-    List<SinaKLineResponse> getKLineData(@RequestParam("symbol") String code, @RequestParam("scale") Integer scale, @RequestParam("ma") String ma, @RequestParam("datalen") Integer datalen);
+    List<SinaKLineResponse> getKLineData(@RequestParam("symbol") String code, @RequestParam("scale") Integer scale, @RequestParam("ma") String ma, @RequestParam("datalen") Long datalen);
 
 }

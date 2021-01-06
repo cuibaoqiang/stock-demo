@@ -13,11 +13,30 @@ import java.util.Date;
 @Data
 public class SinaKLineResponse {
 
+    /**
+     * 时间
+     */
     private Date day;
+    /**
+     * 开始价格
+     */
     private BigDecimal open;
+    /**
+     * 最高价格
+     */
     private BigDecimal high;
+    /**
+     * 最低价格
+     */
     private BigDecimal low;
+    /**
+     * 结束价格
+     */
     private BigDecimal close;
+
+    /**
+     * 成交量（手）
+     */
     private BigDecimal volume;
 
 }

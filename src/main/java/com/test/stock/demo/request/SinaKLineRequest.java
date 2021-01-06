@@ -26,8 +26,8 @@ public class SinaKLineRequest {
     private String ma;
 
     /**
-     * 节点数
+     * 与当前日期的差 最近dateLen个交易日
      */
-    private Integer dataLen;
+    private Long dateLen;
 
 }
