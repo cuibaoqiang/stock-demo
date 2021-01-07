@@ -37,7 +37,7 @@ public interface StockService {
      * 查询买入建议
      * @return 日期列表
      */
-    List<Date> getBuyAdvice(AdviceRequest request);
+    List<KLineInfo> getBuyAdvice(AdviceRequest request);
 
     /**
      * 查询售出建议

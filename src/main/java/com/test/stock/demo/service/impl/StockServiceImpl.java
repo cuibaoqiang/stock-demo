@@ -71,9 +71,9 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public List<Date> getBuyAdvice(AdviceRequest request) {
-        int adviceDays = 60;
-        List<Date> result = new ArrayList<>();
+    public List<KLineInfo> getBuyAdvice(AdviceRequest request) {
+        int adviceDays = 120;
+        List<KLineInfo> result = new ArrayList<>();
         List<KLineInfo> kLineEndData = getKLineEndData(SinaKLineRequest.builder().code(request.getCode()).dateLen(DateUtil.dateInterval(new Date(), request.getBeginDate()) + adviceDays).build());
         int tempIndex = kLineEndData.stream().filter(temp -> temp.getDay().before(request.getBeginDate())).collect(Collectors.toList()).size() - 1;
         while (tempIndex < kLineEndData.size()) {
@@ -81,10 +81,10 @@ public class StockServiceImpl implements StockService {
                 tempIndex++;
                 continue;
             }
-            List<KLineInfo> viewList = kLineEndData.subList(Math.max(0, tempIndex - adviceDays), tempIndex);
-            if (viewList.get(viewList.size() - 1).getClose().doubleValue() > viewList.stream().map(KLineInfo::getClose).collect(Collectors.averagingDouble(BigDecimal::doubleValue)) && isContinueIncrease(viewList, 3)) {
+            List<KLineInfo> viewList = kLineEndData.subList(Math.max(1, tempIndex - adviceDays + 1), tempIndex + 1);
+            if (viewList.get(viewList.size() - 1).getClose().doubleValue() >= viewList.stream().max(Comparator.comparing(KLineInfo::getClose)).get().getClose().doubleValue() && isContinueIncrease(viewList, 3)) {
                 if (viewList.get(viewList.size() - 1).getDay().after(request.getBeginDate())) {
-                    result.add(viewList.get(viewList.size() - 1).getDay());
+                    result.add(viewList.get(viewList.size() - 1));
                 }
             }
             tempIndex++;
