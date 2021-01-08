@@ -11,11 +11,11 @@ import com.test.stock.demo.response.SinaKLineResponse;
 import com.test.stock.demo.response.XiongResponse;
 import com.test.stock.demo.service.StockService;
 import com.test.stock.demo.utils.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
  * @date 2021-01-05 16:06:18
  * @desc
  */
+@Slf4j
 @Service
 public class StockServiceImpl implements StockService {
 
@@ -75,14 +76,15 @@ public class StockServiceImpl implements StockService {
         int adviceDays = 120;
         List<KLineInfo> result = new ArrayList<>();
         List<KLineInfo> kLineEndData = getKLineEndData(SinaKLineRequest.builder().code(request.getCode()).dateLen(DateUtil.dateInterval(new Date(), request.getBeginDate()) + adviceDays).build());
-        int tempIndex = kLineEndData.stream().filter(temp -> temp.getDay().before(request.getBeginDate())).collect(Collectors.toList()).size() - 1;
+        int tempIndex = kLineEndData.stream().filter(temp -> temp.getDay().before(request.getBeginDate())).collect(Collectors.toList()).size();
         while (tempIndex < kLineEndData.size()) {
             if (tempIndex < 3) {
                 tempIndex++;
                 continue;
             }
             List<KLineInfo> viewList = kLineEndData.subList(Math.max(1, tempIndex - adviceDays + 1), tempIndex + 1);
-            if (viewList.get(viewList.size() - 1).getClose().doubleValue() >= viewList.stream().max(Comparator.comparing(KLineInfo::getClose)).get().getClose().doubleValue() && isContinueIncrease(viewList, 3)) {
+            if (viewList.get(viewList.size() - 1).getClose().doubleValue() >= viewList.stream().max(Comparator.comparing(KLineInfo::getClose)).get().getClose().doubleValue() && isContinueIncrease(request.getCode(), viewList, 3)) {
+
                 if (viewList.get(viewList.size() - 1).getDay().after(request.getBeginDate())) {
                     result.add(viewList.get(viewList.size() - 1));
                 }
@@ -97,16 +99,16 @@ public class StockServiceImpl implements StockService {
         return null;
     }
 
-    private boolean isContinueIncrease(List<KLineInfo> viewList, Integer continueDays) {
-        while (continueDays > 0) {
-            if (continueDays >= viewList.size()) {
-                return false;
+    private boolean isContinueIncrease(String code, List<KLineInfo> viewList, Integer continueDays) {
+
+        int tempDays = 1;
+        while (tempDays < viewList.size()) {
+            if (viewList.get(viewList.size() - tempDays).getClose().compareTo(viewList.get(viewList.size() - tempDays - 1).getClose()) < 0) {
+                break;
             }
-            if (viewList.get(viewList.size() - continueDays).getClose().compareTo(viewList.get(viewList.size() - continueDays - 1).getClose()) < 0) {
-                return false;
-            }
-            continueDays--;
+            tempDays++;
         }
-        return true;
+        log.warn("{} viewList size {} continue days {}",code, viewList.size() , tempDays - 1);
+        return tempDays - 1 == continueDays;
     }
 }
